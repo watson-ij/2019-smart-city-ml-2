@@ -487,8 +487,11 @@ assert(average_counts({"a" : 2, "word" : 1, "list" : 1, "it":2, "is":1, "yes":2}
 We're almost there. Now, we just need to open our =alice.txt= file and
 pass it through our functions. We can use =open= to open a file, then
 =file.readlines()= will give us the data, one line at a time. We can
-do it like so:
+do it like so (the "wget" line is to retrieve the data from my github,
+colab doesn't import all the files in the repository, just the
+notebook):
 #+begin_src jupyter-python :session py
+!wget https://raw.githubusercontent.com/watson-ij/2019-smart-city-ml-2/master/alice.txt
 txt = open('alice.txt')
 worddict = {}
 for line in txt.readlines():
