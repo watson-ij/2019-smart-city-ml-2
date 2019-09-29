@@ -1,0 +1,515 @@
+# -*- org-export-babel-evaluate: nil -*-
+#+TITLE:
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+BEAMER_FRAME_LEVEL: 1
+#+OPTIONS: ^:{} toc:nil H:1
+#+OX-IPYNB-LANGUAGE: ipython
+
+# Theme Replacements
+#+BEAMER_THEME: Madrid
+#+LATEX_HEADER: \usepackage{mathpazo}
+# +LATEX_HEADER: \definecolor{IanColor}{rgb}{0.4, 0, 0.6}
+#+BEAMER_HEADER: \definecolor{IanColor}{rgb}{0.0, 0.4, 0.6}
+#+BEAMER_HEADER: \usecolortheme[named=IanColor]{structure} % Set a nicer base color
+#+BEAMER_HEADER: \newcommand*{\LargerCdot}{\raisebox{-0.7ex}{\scalebox{2.5}{$\cdot$}}} 
+# +LATEX_HEADER: \setbeamertemplate{items}{$\LargerCdot$} % or \bullet, replaces ugly png
+#+BEAMDER_HEADER: \setbeamertemplate{items}{$\bullet$} % or \bullet, replaces ugly png
+#+BEAMER_HEADER: \colorlet{DarkIanColor}{IanColor!80!black} \setbeamercolor{alerted text}{fg=DarkIanColor} \setbeamerfont{alerted text}{series=\bfseries}
+
+#+LATEX: \newcommand{\comment}[1]{}
+
+#+LATEX: \setbeamertemplate{navigation symbols}{} % Turn off navigation
+
+#+LATEX: \institute[UoS]{University of Seoul}
+#+LATEX: \author{Ian J. Watson}
+#+LATEX: \title[More Python and Alice]{Introduction to Machine Learning} \subtitle{Lecture 2: More Python and Alice}
+#+LATEX: \date[Intro to Machine Learning]{University of Seoul Graduate Course 2019} 
+#+LATEX: \titlegraphic{\includegraphics[height=.14\textheight]{../../../course/2018-stats-for-pp/KRF_logo_PNG.png} \hspace{15mm} \includegraphics[height=.2\textheight]{../../2017-stats-for-pp/logo/UOS_emblem.png}}
+#+LATEX: \maketitle
+
+* Housekeeping
+
+- Today, we'll review python, but some housekeeping first
+- Further issues with Thursdays
+  - Oct. 26 will move to Mon., Oct 21 1-4 pm
+  - If you can't make it, try to do the exercises at home, I won't
+    mark you absent (but will mark you down if you don't complete the
+    exercises!)
+- Find the classroom link at  https://git.io/ml2019-2
+  - Complete all the tasks by the end of class and *remember to upload to github*
+  - Ask if you need help
+- Remember to log out!
+
+* Further Resources
+
+- Some resources to help your programming skills (free to read online):
+  - Think like a computer scientist _[[http://openbookproject.net/thinkcs/python/english3e/]]_
+    - Gives a very good and slow overview of how to program
+  - Automate the Boring Stuff with Python: _[[https://automatetheboringstuff.com/]]_
+    - Gives very practical and usable examples of how programming can
+      help you with everyday tasks
+    - Particularly for researches, there are lots of places where a
+      simple script can turn days of drudge work into a minute running
+      a script
+- For those who want/need homework, run through the exercises in
+  these books and find a place in your current workflow that can be
+  improved with programming
+
+* Lists reminder
+
+- We can also have composite data types, that is, a type that holds other types
+- A list holds several objects in a single data structure
+  - So, the empty list (list with no objects) is =[]=
+- Use square brackets with objects separated by lists
+
+#+begin_src jupyter-python :session py
+lst = [1, 2, 3, 4]
+print("Length {}".format(len(lst))) # len Gives the length of list lst
+print(lst[0])
+#+end_src
+
+- Individual objects can be accessed using square brackets and an
+  /index/, starting at 0, and going to =len(list)-1=
+- You can grow a list with =append=, it will grow in place
+#+begin_src jupyter-python :session py
+lst = [1, 2, 3, 4]
+lst.append(5) # Now lst is [1, 2, 3, 4, 5]
+lst[3] = 2 # Can reassign, now lst is [1, 2, 3, 3, 5]
+lst[4] # would fail before the append statement
+#+end_src
+- You can =+= lists together to /concatenate/ them
+#+begin_src jupyter-python :session py
+lst1 = [1, 2, 3]
+lst2 = [4, 5, 6]
+lst1+lst2
+#+end_src
+- You can check if an element appears in a list using =in=, similar to strings
+#+begin_src jupyter-python :session py
+1 in [1, 2, 3] # True
+4 in [1, 2, 3] # False
+#+end_src
+
+* Lists and looping
+
+- To loop over a list, we can use =for=
+- =for a in l:=
+  - =l= should be a list, then =a= is a new variable, which gets
+    replaced with each list element in turn
+#+begin_src jupyter-python :session py
+for a in [1, 2, 3, 4]:
+   print(str(a))
+#+end_src
+
+- prints "1", then "2", then "3", then "4"
+
+- At the end, =a= will be filled with 4, but really, we shouldn't use
+  list variables after the loop, this is a side-effect of python's
+  /scoping rules/ [some technical info. follows]:
+  - /variable scope/ refers to where a variable is allowed to be used,
+    and where it gets destroyed. Python has /function scope/, that
+    means variables are defined and exist for the extent of the
+    function
+  - In other languages, the loop variable would go /out of scope/ at
+    the end of the loop, this is part of /lexical scope/, where blocks
+    define variable /lifetime/
+
+* Range
+
+- We often want to get an index =i= to go from 0, 1, 2, 3, etc. giving n numbers out: =[0, 1, 2, 3, ..., n-1]=
+- We can use the function =range= to do this:
+#+begin_src jupyter-python :session py
+l = []
+for i in range(10):
+   l.append(i)
+#+end_src
+
+#+RESULTS:
+: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+- =range= can also start at a different number
+  - =range(a, b)= will go from =a= to =b-1=
+#+begin_src jupyter-python :session py
+l = []
+for i in range(3, 10):
+   l.append(i)
+#+end_src
+
+#+RESULTS:
+: [3, 4, 5, 6, 7, 8, 9]
+
+* Range, continued
+
+- Finally, we don't have to increment by 1
+  - In =range(a, b, c)= the list ends when the next item would be equal to b or more
+#+begin_src jupyter-python :session py
+l = []
+for i in range(3, 10, 2):
+    l.append(i)
+#+end_src
+
+#+RESULTS:
+: [3, 5, 7, 9]
+- We can use this when we want to skip through lists, taking every nth element, for instance
+
+* Ranges and list
+
+- If theres some reason not use a simple for loop (for example we need
+  to process two lists of the same length, or we want to change the
+  list) we can use ranges to loop over lists
+#+begin_src jupyter-python :session py
+l = [1, 2, 3, 4]
+for i in range(len(l)):  # i is an "index" to the list
+    l[i] += 1 # add one to each element of the list
+#+end_src
+
+#+begin_src jupyter-python :session py
+l1 = [1,2,3,4]
+l2 = [3,4,5,6]
+for i in range(len(l1)):
+  # Now can you use elements of both lists
+  print("{} {}".format(l1[i], l2[i]))
+#+end_src
+
+- In this case we could also use =zip(a, b)=, look up =help(zip)= if
+  you are interested
+
+* enumerate
+
+- The code on the last page is fine, but its more pythonic to use =enumerate= for this
+#+begin_src jupyter-python :session py
+l = [1,2,3,4]
+for i, el in enumerate(l):
+    l[i] = el + 1
+#+end_src
+- =enumerate= gives us two outputs for every element: the index (here
+  =i=), and the element itself (here =el=)
+- There are many ways to accomplish the same task!
+- Pick a way that makes sense to you and use that
+- Be aware of alternate approaches, if you find yourself writing too
+  much code, there's probably a simpler way to do it!
+
+* Functions
+
+- We've been using lots of functions, like =len=, or =format=
+- You pass the function /arguments/ to be used inside the function
+  - =len(lst)=, =math.log(10, 2)=
+- You define with =def=, you need to name it, and give a /parameter list/
+  - For each /parameter/ of you function, you expect the user of your
+    function to pass an /argument/
+- You can do work inside the function, then you can =return= a value back to the user
+#+begin_src jupyter-python :session py
+def add_3_numbers(a, b, c):
+   return a+b+C
+
+d = add_3_numbers(1, 2, 3) # d will be set to 6
+#+end_src
+
+* Functions (continued)
+
+- Lets look a closer at the function =def=
+- =def f():=
+  - This defines a function of no parameters. You don't pass any arguments
+#+begin_src jupyter-python :session py
+def f():
+ return 1
+
+f() # 1
+#+end_src
+- =def f(a):= this defines a function of 1 parameters
+  - When you pass an argument, whatever was passed gets /bound/ to =a= inside the function
+#+begin_src jupyter-python :session py
+def f(a):
+  return a+1 # I can use a inside the function
+#+end_src
+
+* Functions, return
+
+- =return= *immediately* /exits/ the function, and returns the value
+  to the /caller/, the user of the function
+- You can =return= anywhere inside the function
+  - If you have special conditions, good to return early, then process
+    the data knowing that that condition can't hold
+- The factorial function is defined /(n! = 1 \times 2 \times  3 \ldots \times n/)
+  - Or: \(0! = 1\), \(n! = n \times (n-1)!\), this is a /recursive/
+    definition, it defines the function in terms of itself, plus a
+    stopping case, check the stopping case first, then process the function:
+#+begin_src jupyter-python :session py
+def factorial(n):
+    if n == 0: return 1
+    return n * factorial(n-1)
+
+factorial(5) # 120
+#+end_src
+
+* Functions (continured)
+
+- Function calls pass a /reference/ to the parameter, that is, it takes a
+  /shallow/ copy of the argument
+  - That means, if you change integers in the function, outside the
+    function, at the /call site/ they won't change, but /mutable/
+    objects, like lists or dictionaries /will/ change
+
+#+begin_src jupyter-python :session py
+a = 4
+def add_4_toi(i):
+  return 4+i
+
+add_4_toi(a) # We're ignoring the return value here
+a # a is still 4
+#+end_src
+
+#+begin_src jupyter-python :session py
+a = [1,2,3]
+def add_4_tol(l):
+  l.append(4)
+
+add_4_tol(a)  # inside the function, l /binds/ to the list a
+a # Now a is [1, 2, 3, 4]
+#+end_src
+
+* Exercises from Last Week
+
+#+LATEX: Lets go through the exercises from last week \comment{
+
+Fix this greeting function, it should say Hello to the user, given
+his/her name, but its not working
+
+#+begin_src jupyter-python :session py
+def greet(name):
+    return name
+
+# These shouldn't give an error after you write your function
+assert(greet("Frodo") == "Hello, Frodo")
+assert(greet("Sam") == "Hello, Sam")
+assert(greet("Gandalf") == "Hello, Gandalf")
+#+end_src
+
+Write =greet= again, but this time, if Frodo asks to be greeted, you
+should print a special message
+#+begin_src jupyter-python :session py
+def greet(name):
+    return name
+
+# These shouldn't give an error after you write your function
+assert(greet("Frodo") == "Take the ring, Frodo")
+assert(greet("Sam") == "Hello, Sam")
+assert(greet("Gandalf") == "Hello, Gandalf")
+#+end_src
+
+Write a function =is_odd= that returns =True= if the input is odd or
+=False= if its even
+#+begin_src jupyter-python :session py
+# your function goes here
+
+assert(is_odd(3) == True)
+assert(is_odd(2) == False)
+assert(is_odd(1327) == False)
+#+end_src
+
+Write a function =mysum= that sums numbers when passed in a list
+[there is a built-in sum function, but dont use that]
+#+begin_src jupyter-python :session py
+# your function goes here
+
+assert(mysum[1,2,3] == 6)
+assert(mysum[1,2] == 2)
+assert(mysum[] == 0)
+#+end_src
+
+Write a function =every_other_element= that returns the first, third, fifth, etc. elements of a list
+#+begin_src jupyter-python :session py
+assert(every_other_element([1, 2, 3, 4, 5] == [1, 3, 5]))
+assert(every_other_element([]) == [])
+assert(every_other_element([1]) == [1])
+#+end_src
+
+The Fibonacci numbers are a sequence that goes 1, 1, 2, 3, 5, 8, 13,
+... where the next number is the sum of the previous two (starting
+with 1, 1). Write a function that takes in n, and outputs the nth
+Fibonacci number (where fibonacci(1)==1, fibonacci(2)==1)
+#+begin_src jupyter-python :session py
+assert(fibonacci(1) == 1)
+assert(fibonacci(2) == 1)
+assert(fibonacci(5) == 5)
+assert(fibonacci(7) == 13)
+assert(fibonacci(20) == 6765)
+assert(fibonacci(50) == 12586269025)
+#+end_src
+
+Write a function that takes two lists, and outputs True if they
+=overlap=, that is, if are there elements that appear in both lists
+#+begin_src jupyter-python :session py
+assert(overlap([1], [1])==True)
+assert(overlap([1], [2])==False)
+assert(overlap([1], [2,3,4,5])==False)
+assert(overlap([9,7,2,1], [2,3,4,5])==True)
+assert(overlap([9,7,2,4], [2,3,4,5])==True)
+assert(overlap([9,7,22,44], [2,3,4,5])==False)
+#+end_src
+
+There is a very useful function called =map= which takes a function
+and a list, and returns a list made by applying the function to each
+element of the list. Write =mymap= which duplicates this
+functionality. Don't use =map=, obviously.
+#+begin_src jupyter-python :session py
+assert(mymap(lambda x: x*2, [1, 2, 3]) == [2, 4, 6]) # lambda is a way to make short functions of one line
+assert(mymap(lambda x: x*2, []) == [])
+assert(mymap(lambda x: x**2, [1, 2, 3]) == [1, 4, 9])
+assert(mymap(lambda x: x[0], [[1], [2,3], [3,4]]) == [1, 2, 3])
+#+end_src
+
+#+LATEX: }
+
+* This week : Alice in Wonderland
+
+- There's a text file =alice.txt= in the repo this week
+- It contains the complete text of Alice in Wonderland
+- As a python exercise and first effort to analyse some data, we'll
+  write some functions to process the text and develop some simple analyses
+- E.g. we'll look at the number of different words used, the most and
+  least popular words in the text, and the average number of times a
+  separate word is used
+
+#+LATEX: Exercises in this weeks notebook \comment{
+
+- Lets start with some simple functions, you should test your
+  functions as you write them, as well as making sure the =assert='s
+  don't give errors
+
+Write the function =average=, which takes a list of numbers, and finds
+the average of the list (sum of the numbers, divided by the amount of
+numbers in the list)
+#+begin_src jupyter-python :session py
+def average(list):
+   pass  # "pass" can be used to say that the block is empty. You should fill it in though
+
+assert(average([1]) == 1.0)
+assert(average([1, 2, 3]) == 2.0)
+assert(average([1, 2, 3, 4, 5, 6]) == 21.0/6.0)
+assert(average([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]) == 1)
+assert(abs(average([1.8, 1.8, 1.8, 1.8, 1.8, 1.8, 1.8]) - 1.8) < 0.00001)
+# Question: why is the last line not simply written as:
+# assert(average([1.8, 1.8, 1.8, 1.8, 1.8, 1.8, 1.8]) == 1.8)
+# ? 
+#+end_src
+
+We'll also have a dictionary that contains how many times a word is
+used in the text. That is, =worddict[word] == word_count=. Write a
+function =max_word=, which takes in such a dictionary and outputs the
+word that has the highest word count.
+
+There are a few ways to do this, however, if you want to loop over the
+dictionary, you can get both the key and value with a for loop: 
+- =for key, value in worddict:=
+#+begin_src jupyter-python :session py
+def max_word(worddict):
+   pass
+
+assert(max_word({"a" : 5}) == "a")
+assert(max_word({"a" : 5, "b" : 3}) == "a")
+assert(max_word({"c" : 4, "a" : 5, "b" : 3}) == "a")
+#+end_src
+[Aside: What should we do if theres more than one word with the same
+number of counts, and is max?]
+
+To get out a wordlist, we'll need to first preprocess the data. In
+machine learning, often the hardest task is getting the data into a
+format suitable for analysis. Here, we want to study the distribution
+of word counts, but we have issues of English, like punctuation and
+capitalisation which could obscure our word counts. We should /clean/
+the data, to remove these superfluous elements.
+
+Write the function =line_to_wordlist(line)=, which takes a line of
+text, and then:
+- removes the characters =,./[]*()!'"-_?;:=, i.e. all punctuation characters
+  which we don't think of as part of words
+  - One subtlety is that two dashes =--= can appear with no spaces
+    between the two words as in =then--she=, so we should change =--= to a
+    space
+- splits the text into words
+- The functions ="".split()= and ="".replace(from, to)= will be useful
+- Type =?str.split= or =?str.replace= to get help on these functions
+  - You could use a =for= loop to do the replacement of all the characters...
+- In order to avoid counting "In" and "in" differently, lets also make
+  all the letters lowercase, use =str.lower()=
+#+begin_src jupyter-python :session py
+def line_to_wordlist(line):
+    line = line.replace("*", "")
+    # You'll need to continue replacing, then lower and split the list
+    return line
+
+assert(line_to_wordlist("a list of words") == ["a", "list", "of", "words"])
+assert(line_to_wordlist("a list of words, with some punctuation.") == ["a", "list", "of", "words", "with", "some", "punctuation"])
+assert(line_to_wordlist("A list of words. With some punctuation and Cases.") == ["a", "list", "of", "words", "with", "some", "punctuation", "and", "cases"])
+assert(line_to_wordlist("a large, big list of words, with some punctuation.") == ["a", "large", "big", "list", "of", "words", "with", "some", "punctuation"])
+assert(line_to_wordlist("a (large, big) list of words, with some punctuation.") == ["a", "large", "big", "list", "of", "words", "with", "some", "punctuation"])
+assert(line_to_wordlist("a [large, big] list of words, with punctuation.") == ["a", "large", "big", "list", "of", "words", "with", "punctuation"])
+assert(line_to_wordlist("a [large!, big!] list of words, with punctuation.") == ["a", "large", "big", "list", "of", "words", "with", "punctuation"])
+#+end_src
+
+Now, we can manipulate the lines of text a little, and also find the
+words with the most counts from a worddict, lets write a function
+which actually makes our worddict. =add_line_to_worddict(worddict, line)= 
+should take an existing worddict (it could be the empty
+dictionary ={}=), and a line of text, and adds the count of the words
+to the word dictionary. You'll need to be careful of a few things:
+- Start by using =line_to_wordlist= to get the words
+- Then loop over and add the count to the dictionary
+- What if the word doesn't exist in the dictionary? You can test with =in=: as in, =word in worddict=
+  - You may also need =not=, which turns True to False and False to True
+- At the end, return the worddict. Note though, that dictionaries are
+  /mutable/ objects, that means the dictionary will be changed by the
+  function and this isn't strictly necessary. It also means the
+  original dictionary will be forever altered by the function.
+#+begin_src jupyter-python :session py
+def add_line_to_worddict(worddict, line):
+    pass
+
+assert(add_line_to_worddict({"a":1, "word":1, "list":1}, "a word list") == {"a" : 2, "word" : 2, "list" : 2})
+assert(add_line_to_worddict({}, "a word list") == {"a" : 1, "word" : 1, "list" : 1})
+assert(add_line_to_worddict({"a":1}, "a word list") == {"a" : 2, "word" : 1, "list" : 1})
+assert(add_line_to_worddict({"a":1, "it":1}, "a word list, it is.") == {"a" : 2, "word" : 1, "list" : 1, "it":2, "is":1})
+#+end_src
+
+Using =average=, write a function =average_counts= which takes a
+worddict and returns the average of the word count. You will probably
+find the function =worddict.values()= useful.
+#+begin_src jupyter-python :session py
+def average_counts(worddict):
+    pass
+
+assert(average_counts({"a" : 1, "word" : 1, "list" : 1}) == 1)
+assert(average_counts({"a" : 2, "word" : 3, "list" : 4}) == 3)
+assert(average_counts({"a" : 2, "word" : 1, "list" : 1, "it":2, "is":1, "yes":2}) == 1.5)
+#+end_src
+
+We're almost there. Now, we just need to open our =alice.txt= file and
+pass it through our functions. We can use =open= to open a file, then
+=file.readlines()= will give us the data, one line at a time. We can
+do it like so:
+#+begin_src jupyter-python :session py
+txt = open('alice.txt')
+worddict = {}
+for line in txt.readlines():
+    add_line_to_worddict(worddict, line)
+
+len(worddict)
+#+end_src
+
+I got 1530 words from this. Now pass this through the function you
+wrote above. What is the average word count? What is the word with the
+most counts? How many counts does it have? How many words have a count
+of 1 (they are only used once in the text)? What other issues should
+we take into account if we wanted to do this exercise properly?
+(i.e. what data cleaning issues still remain).
+
+For bonus points, what is the word with the second most counts? (you
+could use =sort= to find this out. Read =help(sort)= to find out how
+to sort a more difficult list, and you might need
+=list(worddict.items())= to turn the dictionary into a list)
+#+begin_src jupyter-python :session py
+
+#+end_src
+
+#+LATEX: }
